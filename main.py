@@ -7,21 +7,9 @@ import time
 import uuid
 from loguru import logger
 
-# Introduction and user confirmation
-def print_intro():
-    print("════════════════════════════════════════════════════════════")
-    print("║       Welcome to NodePay BOT!                            ║")
-    print("║                                                          ║")
-    print("║     Follow us on Twitter:                                ║")
-    print("║     https://twitter.com/cipher_airdrop                   ║")
-    print("║                                                          ║")
-    print("║     Join us on Telegram:                                 ║")
-    print("║     - https://t.me/+tFmYJSANTD81MzE1                     ║")
-    print("╚════════════════════════════════════════════════════════════")
-    answer = input('Will you F** NODEPAY Airdrop? (Y/N): ')
-    if answer.lower() != 'y':
-        print('Aborting installation.')
-        exit(1)
+
+np_token = ''
+proxy_file = 'proxies.txt'
 
 # Constants
 PING_INTERVAL = 10  # seconds
@@ -180,30 +168,8 @@ async def main(np_token, proxy_file):
     tasks = [render_profile_info(proxy) for proxy in active_proxies]
     await asyncio.gather(*tasks)
 
-def ensure_tmux_installed():
-    result = subprocess.run(['which', 'tmux'], stdout=subprocess.PIPE)
-    if result.returncode != 0:
-        logger.info("tmux is not installed. Installing tmux...")
-        subprocess.run(['apt-get', 'update'], check=True)
-        subprocess.run(['apt-get', 'install', '-y', 'tmux'], check=True)
-    else:
-        logger.info("tmux is already installed.")
-
-def run_in_tmux(session_name, script_path):
-    subprocess.run(['tmux', 'new-session', '-d', '-s', session_name, 'python3', script_path])
-    logger.info(f"Started tmux session '{session_name}' running the script.")
 
 if __name__ == '__main__':
-    print_intro()
-    ensure_tmux_installed()
-
-    if "TMUX" not in os.environ:
-        script_path = os.path.abspath(__file__)
-        run_in_tmux('Nodepay', script_path)
-    else:
-        np_token = input("Enter NP_TOKEN: ")
-        proxy_file = input("Enter the directory of the proxy list file: ")
-
         try:
             asyncio.run(main(np_token, proxy_file))
         except (KeyboardInterrupt, SystemExit):
